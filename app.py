@@ -17,16 +17,16 @@ def home():
 ## API 역할을 하는 부분
 @app.route('/orders', methods=['POST'])
 def write_review():
-    order_name = request.form['order_name']
+    order_pname = request.form['order_pname']
     order_count = request.form['order_count']
     order_adr = request.form['order_adr']
     order_phone = request.form['order_phone']
 
     doc = {
-        'order_name': order_name,
+        'order_pname': order_pname,
         'order_count': order_count,
         'order_adr': order_adr,
-        'order_phone':order_phone
+        'order_phone': order_phone
     }
 
     db.orders.insert_one(doc)
@@ -36,9 +36,11 @@ def write_review():
 
 @app.route('/orders', methods=['GET'])
 def read_reviews():
-    orders= list(db.orders.find({}, {'_id': 0}))
+    orders = list(db.orders.find({}, {'_id': 0}))
     return jsonify({'result': 'success', 'msg': '리뷰를 받아왔습니다!', 'orders': orders})
 
 
 if __name__ == '__main__':
+    app.jinja_env.auto_reload = True
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.run('localhost', port=5000, debug=True)

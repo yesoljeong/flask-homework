@@ -63,6 +63,7 @@
                     order_phone: order_phone,
                 }, // data를 작성합니다. },
                 success: function (response) {
+                    console.log(response)
                     if (response['result'] == 'success') {
                         alert(response['msg']);
                         window.location.reload();
