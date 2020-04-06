@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Webpage Title -->
+    <title>베이글팔아요</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+
+    <!-- 구글폰트 -->
+    <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Do+Hyeon&display=swap" rel="stylesheet">
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#orders-box').html('');
+            listing();
+        });
+
+        function make_review() {
+
+            let order_pname = $('#order_pname').val();
+            let order_count = $("#order_count option:selected").val();
+            let order_adr = $('#order_adr').val();
+            let order_phone = $('#order_phone').val();
+
+            if (order_pname === '') {
+                alert('이름을 입력하세요');
+                return;
+            } else if (order_count === '') {
+                alert('수량을 선택하세요!');
+                return;
+            } else if (order_adr === '') {
+                alert('주소를 입력하세요');
+                return;
+            } else if (order_phone === '') {
+                alert('전화번호를 입력하세요');
+                return;
+            }
+
+            $.ajax({
+                type: 'POST', // 타입을 작성합니다.
+                url: '/orders', // url을 작성합니다.
+                data: {
+                    order_pname: order_pname,
+                    order_count: order_count,
+                    order_adr: order_adr,
+                    order_phone: order_phone,
+                }, // data를 작성합니다. },
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        alert(response['msg']);
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+
+        function listing() {
+            // 1. 리뷰 목록을 서버에 요청하기
+            // 2. 요청 성공 여부 확인하기
+            // 3. 요청 성공했을 때 리뷰를 올바르게 화면에 나타내기
+            $.ajax({
+                type: "GET",
+                url: "/orders",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        alert(response['msg']);
+                        // 2. 성공했을 때 리뷰를 올바르게 화면에 나타내기
+                        for (let i = 0; i < response['orders'].length; i++) {
+                            let order = response['orders'][i];
+                            make_card(order['order_pname'], order['order_count'], order['order_adr'], order['order_phone']);
+                        }
+                    } else {
+                        alert('리뷰를 받아오지 못했습니다');
+                    }
+                }
+            });
+        }
+
+        function make_card(order_pname, order_count, order_adr, order_phone) {
+            let temp_html = `<tr>
+                                    <td>${order_pname}</td>
+                                    <td>${order_count}</td>
+                                    <td>${order_adr}</td>
+                                    <td>${order_phone}</td>
+                                </tr>`;
+            $('#orders-box').append(temp_html);
+        }
+
+    </script>
+
+    <style type="text/css">
+        * {
+            font-family: 'Do Hyeon', sans-serif;
+        }
+
+        .wrap {
+            width: 500px;
+            margin: auto;
+        }
+
+        .product-title {
+            font-size: 50px;
+            margin: 0 20px 0 0;
+        }
+
+        .img {
+            background-image: url('https://t1.daumcdn.net/cfile/tistory/99B47E3A5B3D761427');
+            background-size: cover;
+            background-position: center;
+            width: 500px;
+            height: 300px;
+        }
+
+        .info {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            margin: 20px 5px auto 5px;
+        }
+
+        h1,
+        h5 {
+            display: inline;
+        }
+
+        .order {
+            text-align: center;
+        }
+
+        .orders {
+            margin-top: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="img"></div>
+        <div class="info">
+            <p class="lead">
+                <label class="product-title">베이글</label>
+                가격 : 1,000원 / 개
+            </p>
+            <p>베이글 입니다. 크림치즈 발라 먹으면 맛있지요.
+                베이글 입니다. 크림치즈 발라 먹으면 맛있지요.
+                베이글 입니다. 크림치즈 발라 먹으면 맛있지요.</p>
+        </div>
+        <div class="info">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">주문자 이름</span>
+                </div>
+                <input type="text" class="form-control" id="order_pname" aria-describedby="basic-addon3"
+                    placeholder="이름을 입력하세요">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="order_count">수량</label>
+                </div>
+                <select class="custom-select" id="order_count">
+                    <option value=''>--수량을 선택하세요--</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">주소</span>
+                </div>
+                <input type="text" id="order_adr" class="form-control" placeholder="주소를 입력하세요">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">전화번호</span>
+                </div>
+                <input type="text" id='order_phone' class="form-control" placeholder="연락처를 입력하세요">
+            </div>
+            <div class="order">
+                <button onclick="make_review()" type="button" class="btn btn-primary">주문하기!</button>
+            </div>
+        </div>
+        <div class="orders">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">이름</th>
+                        <th scope="col">수량</th>
+                        <th scope="col">주소</th>
+                        <th scope="col">연락처</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-box">
+                    <tr>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                        <td>@mdo</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
